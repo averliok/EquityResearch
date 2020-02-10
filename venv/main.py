@@ -6,15 +6,23 @@ from pandas_datareader import data as wb
 import matplotlib.pyplot as plt
 import time
 import GetTickers
-import re
+import pickle
+import GUI
 
 tickers = GetTickers.get_moex_tickers()
+
+
+def df_creation():
+    quotes1 = []
+    risk1 = []
+    ret1 = []
+    return quotes1, risk1, ret1
 
 
 def get_ticker(tickers):
     while True:
         try:
-            ticker_input = input('Enter the ticker: ')
+            ticker_input = input('Enter the ticker: ').upper()
         except ValueError:
             raise ValueError('Invalid ticker')
         else:
@@ -26,18 +34,14 @@ def get_ticker(tickers):
 
 
 def get_dates():
-    pattern = re.compile('r([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))')
-    while True:
-        try:
-            s_date = input('Enter a starting date (format yyyy-mm-dd): ')
-            e_date = input('Enter an end date (format yyyy-mm-dd): ')
-        except ValueError:
-            raise ValueError('Incorrect data format, should be YYYY-MM-DD')
-        return s_date, e_date
+    s_date1 = input('Enter a starting date (format yyyy-mm-dd): ')
+    e_date1 = input('Enter an end date (format yyyy-mm-dd): ')
+    return s_date1, e_date1
 
-if __name__ == '__main__':
-    tick = get_ticker(tickers)
-    s_date, e_date = get_dates()
+
+tick = get_ticker(tickers)
+s_date, e_date = get_dates()
+quotes, risk, ret = df_creation()
 
 
 class SecurityInfo:
@@ -45,7 +49,7 @@ class SecurityInfo:
     Get all the relevant information on a single stock within a given time period
     """
 
-    def __init__(self, ticker=tick, start_date=s_date, end_date=e_date):
+    def __init__(self, ticker='', start_date='', end_date=''):
         self.ticker = ticker
         self.start_date = start_date
         self.end_date = end_date
@@ -94,16 +98,29 @@ class SecurityInfo:
 
 
 def getsecinfo(tick, s_date, e_date):
-    quote = SecurityInfo(tick, s_date, e_date)
-    quotes = []
-    risk = []
-    ret = []
+    quote_inf = SecurityInfo(tick, s_date, e_date)
+    return quote_inf
+
+
+z = getsecinfo(tick, s_date, e_date)
+
+
+def get_th_info(z):
     quotes.append(tick)
-    risk.append(quote.get_risk())
-    ret.append(quote.get_ror())
-    print(quotes)
-    print(risk)
-    print(ret)
+    risk.append(z.get_risk())
+    ret.append(z.get_ror())
 
 
-getsecinfo(tick, s_date, e_date)
+if __name__ == '__main__':
+    while True:
+        get_th_info(z)
+        print(quotes)
+        print(risk)
+        print(ret)
+        x = input('Do you want to quit program? [Y/N] ')
+        if x.upper() == 'Y':
+            break
+        else:
+            tick = get_ticker(tickers)
+            s_date, e_date = get_dates()
+            z = getsecinfo(tick, s_date, e_date)
