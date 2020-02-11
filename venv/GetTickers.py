@@ -3,6 +3,7 @@
 import xml.etree.ElementTree as ET
 import requests
 
+
 def get_moex_tickers():
     response = requests.get(
         'http://iss.moex.com//iss/statistics/engines/stock/markets/index/analytics/IMOEX/tickers.xml')
@@ -14,3 +15,7 @@ def get_moex_tickers():
         ticker = i.attrib['ticker']
         moex_tickers.append(ticker)
     return moex_tickers
+
+
+if __name__ == '__main__':
+    get_moex_tickers()

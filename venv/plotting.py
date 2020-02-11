@@ -4,5 +4,7 @@
 import matplotlib.pyplot as plt
 
 
-def plot(dataframe):
-    return dataframe.plot(kind='bar', y=['Return', 'Risk'], use_index=True)
+def bar_plot(dataframe):
+    x = dataframe.plot(kind='bar', y=['Return', 'Risk'], use_index=True)
+    x.figure.savefig('bar_chart.png')
+

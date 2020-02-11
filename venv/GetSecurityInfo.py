@@ -8,10 +8,6 @@ import GetTickers
 import GUI
 
 tickers = GetTickers.get_moex_tickers()
-quotes = []
-risk = []
-ret = []
-
 
 def get_ticker(tickers):
     while True:
@@ -31,10 +27,6 @@ def get_dates():
     s_date1 = input('Enter a starting date (format yyyy-mm-dd): ')
     e_date1 = input('Enter an end date (format yyyy-mm-dd): ')
     return s_date1, e_date1
-
-
-tick = get_ticker(tickers)
-s_date, e_date = get_dates()
 
 
 class SecurityInfo:
@@ -95,27 +87,33 @@ def getsecinfo(tick, s_date, e_date):
     return quote_inf
 
 
-z = getsecinfo(tick, s_date, e_date)
+def get_th_info(q_list, r_list, re_list, tick, z):
+    q_list.append(tick)
+    r_list.append(z.get_risk())
+    re_list.append(z.get_ror())
 
-
-def get_th_info(z):
-    quotes.append(tick)
-    risk.append(z.get_risk())
-    ret.append(z.get_ror())
-
-
-while True:
-    get_th_info(z)
-    dict = {'Ticker': quotes, 'Risk': risk, 'Return': ret}
-    df = pd.DataFrame(dict)
-    print(df)
-    x = input('Do you want to quit program? [Y/N] ')
-    if x.upper() == 'Y':
-        df.set_index('Ticker', inplace=True, drop=True)
-        df.to_csv('data.csv')
+def main():
+    quotes = []
+    risk = []
+    ret = []
+    s_date, e_date = get_dates()
+    tick = get_ticker(tickers)
+    quote_inf = SecurityInfo(tick, s_date, e_date)
+    while True:
+        get_th_info(quotes, risk, ret, tick, quote_inf)
+        dictionary = {'Ticker': quotes, 'Risk': risk, 'Return': ret}
+        df = pd.DataFrame(dictionary)
         print(df)
-        break
-    else:
-        tick = get_ticker(tickers)
-        s_date, e_date = get_dates()
-        z = getsecinfo(tick, s_date, e_date)
+        x = input('Do you want to quit program? [Y/N] ')
+        if x.upper() == 'Y':
+            df.set_index('Ticker', inplace=True, drop=True)
+            df.to_csv('data.csv')
+            print(df)
+            return df
+            break
+        else:
+            tick = get_ticker(tickers)
+            quote_inf = getsecinfo(tick, s_date, e_date)
+
+if __name__ == '__main__':
+    main()
