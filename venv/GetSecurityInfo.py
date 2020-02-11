@@ -5,9 +5,11 @@ import numpy as np
 from pandas_datareader import data as wb
 import time
 import GetTickers
-import GUI
+import re
+from datetime import datetime
 
 tickers = GetTickers.get_moex_tickers()
+now = datetime.now()
 
 def get_ticker(tickers):
     while True:
@@ -23,10 +25,17 @@ def get_ticker(tickers):
                 print('Invalid ticker')
 
 
-def get_dates():
-    s_date1 = input('Enter a starting date (format yyyy-mm-dd): ')
-    e_date1 = input('Enter an end date (format yyyy-mm-dd): ')
-    return s_date1, e_date1
+def get_dates(now):
+    while True:
+        s_date1 = input('Enter a starting date (format yyyy-mm-dd): ')
+        e_date1 = input('Enter an end date (format yyyy-mm-dd): ')
+        if re.match(r'\d{4}-\d{2}-\d{2}', s_date1 and e_date1) and e_date1 < now and s_date1 > '2014-1-1':
+            return s_date1, e_date1
+            break
+        else:
+            print("Invalid format")
+
+
 
 
 class SecurityInfo:
@@ -96,7 +105,7 @@ def main():
     quotes = []
     risk = []
     ret = []
-    s_date, e_date = get_dates()
+    s_date, e_date = get_dates(now)
     tick = get_ticker(tickers)
     quote_inf = SecurityInfo(tick, s_date, e_date)
     while True:
@@ -108,7 +117,6 @@ def main():
         if x.upper() == 'Y':
             df.set_index('Ticker', inplace=True, drop=True)
             df.to_csv('data.csv')
-            print(df)
             return df
             break
         else:
