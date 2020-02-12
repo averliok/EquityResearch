@@ -19,7 +19,6 @@ def get_ticker(tickers):
         else:
             if ticker_input in tickers:
                 return str(ticker_input)
-                break
             else:
                 print('Invalid ticker')
 
@@ -30,7 +29,6 @@ def get_dates():
         e_date1 = input('Enter an end date (format yyyy-mm-dd): ')
         if re.match(r'\d{4}-\d{2}-\d{2}', s_date1) and re.match(r'\d{4}-\d{2}-\d{2}', e_date1):
             return s_date1, e_date1
-            break
         else:
             print("Invalid format")
 
@@ -47,7 +45,7 @@ class SecurityInfo:
         self.start_date = start_date
         self.end_date = end_date
         self.log_return = None
-        self.delta = int
+        self.delta = 0
         self._calculate_date_duration()
         self.get_log_return()
 
@@ -89,35 +87,41 @@ class SecurityInfo:
         # Get the standard deviation of an individual stock
         return round(risk, 5)
 
+    def get_variance(self):
+        ror = self.log_return
+        variance = ror.var() * self.delta
+        return round(variance, 5)
+
+
 
 def getsecinfo(tick, s_date, e_date):
     quote_inf = SecurityInfo(tick, s_date, e_date)
     return quote_inf
 
 
-def get_th_info(q_list, r_list, re_list, tick, z):
+def get_th_info(q_list, r_list, re_list, v_list, tick, z):
     q_list.append(tick)
     r_list.append(z.get_risk())
     re_list.append(z.get_ror())
+    v_list.append(z.get_variance())
 
 def main():
     quotes = []
     risk = []
     ret = []
+    variance_list = []
     s_date, e_date = get_dates()
     tick = get_ticker(tickers)
     quote_inf = SecurityInfo(tick, s_date, e_date)
     while True:
-        get_th_info(quotes, risk, ret, tick, quote_inf)
-        dictionary = {'Ticker': quotes, 'Risk': risk, 'Return': ret}
-        df = pd.DataFrame(dictionary)
-        print(df)
+        get_th_info(quotes, risk, ret, variance_list, tick, quote_inf)
+        dictionary_a = {'Ticker': quotes, 'Risk': risk, 'Return': ret, 'Variance': variance_list}
+        df1 = pd.DataFrame(dictionary_a)
+        print(df1)
         x = input('Do you want to quit program? [Y/N] ')
         if x.upper() == 'Y':
-            df.set_index('Ticker', inplace=True, drop=True)
-            df.to_csv('data.csv')
-            return df
-            break
+            df1.set_index('Ticker', inplace=True, drop=True)
+            return df1, ret
         else:
             tick = get_ticker(tickers)
             quote_inf = getsecinfo(tick, s_date, e_date)
