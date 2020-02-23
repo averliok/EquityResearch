@@ -8,7 +8,9 @@ import portfolio
 
 if __name__ == '__main__':
     GetTickers.get_moex_tickers()
-    dataframe, returns = GetSecurityInfo.main()
+    dataframe, variances = GetSecurityInfo.main()
     print(dataframe)
+    print(variances)
+    print(variances.cov())
     #print(returns.cov())
     plotting.bar_plot(dataframe)

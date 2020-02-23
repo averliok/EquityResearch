@@ -115,13 +115,15 @@ def main():
     quote_inf = SecurityInfo(tick, s_date, e_date)
     while True:
         get_th_info(quotes, risk, ret, variance_list, tick, quote_inf)
-        dictionary_a = {'Ticker': quotes, 'Risk': risk, 'Return': ret, 'Variance': variance_list}
+        dictionary_a = {'Ticker': quotes, 'Risk': risk, 'Return': ret}
         df1 = pd.DataFrame(dictionary_a)
+        df2 = pd.DataFrame(variance_list)
         print(df1)
+        print(df2)
         x = input('Do you want to quit program? [Y/N] ')
         if x.upper() == 'Y':
             df1.set_index('Ticker', inplace=True, drop=True)
-            return df1, ret
+            return df1, df2
         else:
             tick = get_ticker(tickers)
             quote_inf = getsecinfo(tick, s_date, e_date)
