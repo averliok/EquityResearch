@@ -4,10 +4,10 @@ import pandas as pd
 import numpy as np
 from pandas_datareader import data as wb
 import time
-import GetTickers
+import get_tickers
 import re
 
-tickers = GetTickers.get_moex_tickers()
+tickers = get_tickers.get_moex_tickers()
 
 
 def get_ticker(tickers):
@@ -25,12 +25,17 @@ def get_ticker(tickers):
 
 def get_dates():
     while True:
-        s_date1 = input('Enter a starting date (format yyyy-mm-dd): ')
-        e_date1 = input('Enter an end date (format yyyy-mm-dd): ')
-        if re.match(r'\d{4}-\d{2}-\d{2}', s_date1) and re.match(r'\d{4}-\d{2}-\d{2}', e_date1):
-            return s_date1, e_date1
+        try:
+            s_date1 = input('Enter a starting date (format yyyy-mm-dd): ')
+            e_date1 = input('Enter an end date (format yyyy-mm-dd): ')
+        except ValueError:
+            raise ValueError("Invalid format")
         else:
-            print("Invalid format")
+            if re.match(r'\d{4}-\d{2}-\d{2}', s_date1) and re.match(r'\d{4}-\d{2}-\d{2}', e_date1):
+                return s_date1, e_date1
+            else:
+                print("Invalid format")
+
 
 
 
@@ -99,11 +104,12 @@ def getsecinfo(tick, s_date, e_date):
     return quote_inf
 
 
-def get_th_info(q_list, r_list, re_list, v_list, tick, z):
-    q_list.append(tick)
-    r_list.append(z.get_risk())
-    re_list.append(z.get_ror())
-    v_list.append(z.get_variance())
+def get_th_info(quotes, risks, returns, variances, tickers, getclass):
+    quotes.append(tickers)
+    risks.append(getclass.get_risk())
+    returns.append(getclass.get_ror())
+    variances.append(getclass.get_variance())
+
 
 def main():
     quotes = []
@@ -116,8 +122,9 @@ def main():
     while True:
         get_th_info(quotes, risk, ret, variance_list, tick, quote_inf)
         dictionary_a = {'Ticker': quotes, 'Risk': risk, 'Return': ret}
+        dictionary_b = {'Ticker': quotes, 'Return': ret}
         df1 = pd.DataFrame(dictionary_a)
-        df2 = pd.DataFrame(variance_list)
+        df2 = pd.DataFrame(dictionary_b)
         print(df1)
         print(df2)
         x = input('Do you want to quit program? [Y/N] ')
@@ -127,6 +134,7 @@ def main():
         else:
             tick = get_ticker(tickers)
             quote_inf = getsecinfo(tick, s_date, e_date)
+
 
 if __name__ == '__main__':
     main()

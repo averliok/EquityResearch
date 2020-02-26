@@ -2,7 +2,7 @@
 
 
 import numpy as np
-import GetSecurityInfo
+import get_security_info
 
 
 def covariance(returns):
