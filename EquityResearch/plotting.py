@@ -4,7 +4,7 @@
 import matplotlib.pyplot as plt
 
 
-class plots:
+class Plots:
     def __init__(self, dataframe):
         self.dataframe = dataframe
 
