@@ -1,14 +1,23 @@
 #!/usr/bin/env python3
 
-import pandas as pd
-import numpy as np
-from pandas_datareader import data as wb
 import time
-import get_tickers
+
+import numpy as np
+import pandas as pd
+from pandas_datareader import data as wb
+
 import GUI
 
-tickers = get_tickers.get_moex_tickers()
-s_date, e_date, ticker = GUI.get_input()
+
+def start():
+    """
+    Basic function to connect GUI to the backend
+    """
+    t, s, e = GUI.main()
+    s_date_test, e_date_test, ticker_test = GUI.get_input(t, s, e)
+    s_date, e_date = GUI.date_validity(s_date_test, e_date_test)
+    ticker = GUI.check_ticker_validity(ticker_test)
+    return ticker, s_date, e_date
 
 
 class SecurityInfo:
@@ -74,11 +83,11 @@ def getsecinfo(tick, s_date, e_date):
     return quote_inf
 
 
-def get_th_info(q_list, r_list, re_list, v_list, tick, z):
-    q_list.append(tick)
-    r_list.append(z.get_risk())
-    re_list.append(z.get_ror())
-    v_list.append(z.get_variance())
+def get_th_info(ticker_list, risk_list, returns_list, variances_list, ticker, class_instance):
+    ticker_list.append(ticker)
+    risk_list.append(class_instance.get_risk())
+    returns_list.append(class_instance.get_ror())
+    variances_list.append(class_instance.get_variance())
 
 
 def main():
@@ -86,23 +95,21 @@ def main():
     risk = []
     ret = []
     variance_list = []
-    '''s_date, e_date = get_dates()
-    tick = get_ticker(tickers)'''
+    ticker, s_date, e_date = start()
     quote_inf = SecurityInfo(ticker, s_date, e_date)
     while True:
         get_th_info(quotes, risk, ret, variance_list, ticker, quote_inf)
-        dictionary_a = {'Ticker': quotes, 'Risk': risk, 'Return': ret}
-        df1 = pd.DataFrame(dictionary_a)
-        df2 = pd.DataFrame(variance_list)
-        print(df1)
-        print(df2)
-        x = input('Do you want to quit program? [Y/N] ')
-        if x.upper() == 'Y':
-            df1.set_index('Ticker', inplace=True, drop=True)
-            return df1, df2
+        dictionary = {'Ticker': quotes, 'Risk': risk, 'Return': ret}
+        dataframe = pd.DataFrame(dictionary)
+        z = GUI.ask_continue()
+        j = GUI.get_cont_input(z)
+        if j == 'N':
+            dataframe.set_index('Ticker', inplace=True, drop=True)
+            return dataframe
         else:
-            s_date, e_date, ticker
+            ticker, s_date, e_date = start()
             quote_inf = getsecinfo(ticker, s_date, e_date)
+
 
 if __name__ == '__main__':
     main()
