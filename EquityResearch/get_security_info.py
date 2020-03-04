@@ -9,17 +9,6 @@ from pandas_datareader import data as wb
 import GUI
 
 
-def start():
-    """
-    Basic function to connect GUI to the backend
-    """
-    t, s, e = GUI.main()
-    s_date_test, e_date_test, ticker_test = GUI.get_input(t, s, e)
-    s_date, e_date = GUI.date_validity(s_date_test, e_date_test)
-    ticker = GUI.check_ticker_validity(ticker_test)
-    return ticker, s_date, e_date
-
-
 class SecurityInfo:
     """
     Get all the relevant information on a single stock within a given time period
@@ -95,19 +84,18 @@ def main():
     risk = []
     ret = []
     variance_list = []
-    ticker, s_date, e_date = start()
+    ticker, s_date, e_date = GUI.main()
     quote_inf = SecurityInfo(ticker, s_date, e_date)
     while True:
         get_th_info(quotes, risk, ret, variance_list, ticker, quote_inf)
         dictionary = {'Ticker': quotes, 'Risk': risk, 'Return': ret}
         dataframe = pd.DataFrame(dictionary)
-        z = GUI.ask_continue()
-        j = GUI.get_cont_input(z)
-        if j == 'N':
+        j = GUI.ask_quit()
+        if j == 'no':
             dataframe.set_index('Ticker', inplace=True, drop=True)
             return dataframe
         else:
-            ticker, s_date, e_date = start()
+            ticker, s_date, e_date = GUI.main()
             quote_inf = getsecinfo(ticker, s_date, e_date)
 
 
