@@ -32,9 +32,9 @@ The program will also prompt the user if the ticker they have entered is not pub
 
 ![Invalid ticker](https://raw.githubusercontent.com/averliok/EquityResearch/master/EquityResearch/images/Invalid%20Ticker.png)
 
-After succesfully logging in the information, the user will be prompted to either continue or quit the program. The program takes 'Y' input as yes, and anything else as no (the quit button does work too).
+After succesfully logging in the information, the user will be prompted to either continue or quit the program.
 
-![Use_2](https://raw.githubusercontent.com/averliok/EquityResearch/master/EquityResearch/images/Use_2.png)
+![Continue](https://raw.githubusercontent.com/averliok/EquityResearch/master/EquityResearch/images/Continue.png)
 
 Upon quitting, the bar chart representing return and risk will be created in parent folder.
 
