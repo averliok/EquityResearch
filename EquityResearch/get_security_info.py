@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
 
 import time
-
 import numpy as np
 import pandas as pd
 from pandas_datareader import data as wb
-
 import GUI
 
 
@@ -79,24 +77,22 @@ def get_th_info(ticker_list, risk_list, returns_list, variances_list, ticker, cl
     variances_list.append(class_instance.get_variance())
 
 
+quotes = []
+risk = []
+ret = []
+variance_list = []
+
+
 def main():
-    quotes = []
-    risk = []
-    ret = []
-    variance_list = []
     ticker, s_date, e_date = GUI.main()
     quote_inf = SecurityInfo(ticker, s_date, e_date)
-    while True:
-        get_th_info(quotes, risk, ret, variance_list, ticker, quote_inf)
-        dictionary = {'Ticker': quotes, 'Risk': risk, 'Return': ret}
-        dataframe = pd.DataFrame(dictionary)
-        j = GUI.ask_quit()
-        if j == 'no':
-            dataframe.set_index('Ticker', inplace=True, drop=True)
-            return dataframe
-        else:
-            ticker, s_date, e_date = GUI.main()
-            quote_inf = getsecinfo(ticker, s_date, e_date)
+    get_th_info(quotes, risk, ret, variance_list, ticker, quote_inf)
+    dictionary = {'Ticker': quotes, 'Risk': risk, 'Return': ret}
+    if GUI.ask_quit():
+        main()
+    dataframe = pd.DataFrame(dictionary)
+    dataframe.set_index('Ticker', inplace=True, drop=True)
+    return dataframe
 
 
 if __name__ == '__main__':
